@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+  queue:
+    image: rabbitmq:latest
+    ports: 
+      - '5672:5672'
+  api:
+    build: api
+    ports:
+      - '5000:5000'
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
+      - queue
+  worker:
+    build: worker
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
+      - queue
